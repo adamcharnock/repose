@@ -1,0 +1,88 @@
+from repose.client import Client
+
+
+class Api(object):
+    """ A top-level API representation
+
+    Initialising an ``Api`` instance is a necessary step as
+    doing so will furnish all registered Resources (and their Managers)
+    with access to the API client.
+
+    For example::
+
+        my_api = Api(base_url='http://example.com/api/v1')
+        my_api.register_resource(User)
+        my_api.register_resource(Comment)
+        my_api.register_resource(Page)
+
+    The same can be achieved by implementing a child class. This also
+    gives the additional flexibility of being able to add more complex
+    logic by overriding existing methods. For example::
+
+        class MyApi(Api):
+            # Alternative way to provide base_url and resources
+            base_url = '/api/v1'
+            resources = [User, Comment, Page]
+
+            # Additionally, customise the base URL generation
+            def get_base_url(self):
+                return 'http://{host}/api/{account}'.format(
+                    host=self.host,
+                    account=self.account,
+                )
+
+        my_api = MyApi(host='myhost.com', account='my-account')
+
+    .. note: All options passed to the Api's constructor will become
+             available as instance variables. See the able example and
+             the use of ``account``.
+    """
+
+    client_class = Client
+    base_url = None
+    resources = []
+
+    def __init__(self, **options):
+        """ Initialise the Api
+
+        Pass options in to customise instance variables. For example::
+
+            my_api = Api(base_url='http://example.com/api/v1')
+
+        :param options: All options specified will will become
+                        available as instance variables.
+        """
+        for k, v in options.items():
+            setattr(self, k, v)
+
+        self.client = self.get_client()
+        for resource in self.resources:
+            resource.contribute_client(self.client)
+
+    def register_resource(self, resource):
+        """Register a resource with the Api
+
+        This will cause the resource's client attribute to be
+        populated.
+
+        :param resource Resource:
+        """
+        self.resources.add(resource)
+
+        # Pass the client to the model if we have the client available
+        if self.client:
+            resource.contribute_client(self.client)
+
+    def get_client_class(self):
+        return self.client_class
+
+    def get_client(self):
+        client_class = self.get_client_class()
+        return client_class(self.get_base_url())
+
+    def get_base_url(self):
+        return self.base_url
+
+
+
+
