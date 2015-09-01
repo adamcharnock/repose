@@ -16,10 +16,17 @@ class Client(object):
     def make_url(self, endpoint):
         return '{}/{}'.format(self.base_url, endpoint.lstrip('/'))
 
+    def parse_response(self, response):
+        return response
+
     def get(self, endpoint):
         r = requests.get(self.make_url(endpoint))
-        return utilities.parse_response(r)
+        return self.parse_response(r)
 
     def put(self, endpoint, json):
         r = requests.put(self.make_url(endpoint), json=json)
-        return utilities.parse_response(r)
+        return self.parse_response(r)
+
+    def post(self, endpoint, json):
+        r = requests.post(self.make_url(endpoint), json=json)
+        return self.parse_response(r)
