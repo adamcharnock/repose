@@ -20,7 +20,7 @@ setup(
     # Put your license here. See LICENSE.txt for more information
     license='',
     # Put a nice one-liner description here
-    description='',
+    description='Quickly create restful API clients in Python',
     long_description=open('README.rst').read() if exists("README.rst") else "",
     # Any requirements here, e.g. "Django >= 1.1.1"
     install_requires=[
