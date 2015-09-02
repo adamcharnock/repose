@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Python Hue Client documentation build configuration file, created by
+# Repose documentation build configuration file, created by
 # sphinx-quickstart on Tue Sep  1 12:09:29 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -50,7 +50,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Python Hue Client'
+project = u'Repose'
 copyright = u'2015, Adam Charnock'
 author = u'Adam Charnock'
 
@@ -206,7 +206,7 @@ html_static_path = ['_static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'PythonHueClientdoc'
+htmlhelp_basename = 'reposedoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -228,7 +228,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'PythonHueClient.tex', u'Python Hue Client Documentation',
+  (master_doc, 'Repose.tex', u'Repose Documentation',
    u'Adam Charnock', 'manual'),
 ]
 
@@ -258,7 +258,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'pythonrepose', u'Python Hue Client Documentation',
+    (master_doc, 'pythonrepose', u'Repose Documentation',
      [author], 1)
 ]
 
@@ -272,8 +272,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'PythonHueClient', u'Python Hue Client Documentation',
-   author, 'PythonHueClient', 'One line description of project.',
+  (master_doc, 'Repose', u'Repose Documentation',
+   author, 'ReposeClient', 'Quickly create restful API clients in Python.',
    'Miscellaneous'),
 ]
 
