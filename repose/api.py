@@ -67,7 +67,7 @@ class Api(object):
 
         :param resource Resource:
         """
-        self.resources.add(resource)
+        self.resources.append(resource)
 
         # Pass the client to the model if we have the client available
         if self.client:

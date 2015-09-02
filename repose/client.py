@@ -14,10 +14,11 @@ class Client(object):
         self.base_url = base_url
 
     def make_url(self, endpoint):
-        return '{}/{}'.format(self.base_url, endpoint.lstrip('/'))
+        return '{}/{}'.format(self.base_url.rstrip('/'), endpoint.lstrip('/'))
 
     def parse_response(self, response):
-        return response
+        response.raise_for_status()
+        return response.json()
 
     def get(self, endpoint):
         r = requests.get(self.make_url(endpoint))
