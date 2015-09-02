@@ -45,7 +45,7 @@ class Manager(object):
 
     def filter(self, results):
         if self.filter_fn:
-            return filter(self.filter_fn, results)
+            return list(filter(self.filter_fn, results))
         else:
             return results
 
