@@ -134,3 +134,9 @@ USER_DATA = {
         },
     ]
 }
+
+
+POST_DATA = {
+    'id': 1,
+    'content': 'Hello there',
+}

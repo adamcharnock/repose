@@ -1,4 +1,4 @@
-from repose.tests import User, Post, USER_DATA, TestCase
+from repose.tests import User, Post, USER_DATA, TestCase, POST_DATA
 
 
 class MakeEndpointTestCase(TestCase):
@@ -57,3 +57,15 @@ class LazyListTestCase(TestCase):
         self.assertEqual(self.list.is_loaded(), True)
         self.assertEqual(len(self.list), 5)
         self.assertEqual(self.list, [1, 9, 2,3,4])
+
+    def test_set_parent_lazy(self):
+        from repose.utilities import LazyList
+        resources = [Post(**POST_DATA), Post(**POST_DATA)]
+        lazy_list = LazyList((r for r in resources), size=2)
+        parent = User(**USER_DATA)
+        lazy_list.set_parent_lazy(parent)
+        lazy_list._load()
+
+        post1, post2 = resources
+        self.assertEqual(post1.parent_resource.name, parent.name)
+        self.assertEqual(post2.parent_resource.name, parent.name)
