@@ -64,7 +64,21 @@ class LazyListTestCase(TestCase):
         lazy_list = LazyList((r for r in resources), size=2)
         parent = User(**USER_DATA)
         lazy_list.set_parent_lazy(parent)
+        # Do the load after
         lazy_list._load()
+
+        post1, post2 = resources
+        self.assertEqual(post1.parent_resource.name, parent.name)
+        self.assertEqual(post2.parent_resource.name, parent.name)
+
+    def test_set_parent_lazy_loaded(self):
+        from repose.utilities import LazyList
+        resources = [Post(**POST_DATA), Post(**POST_DATA)]
+        lazy_list = LazyList((r for r in resources), size=2)
+        parent = User(**USER_DATA)
+        # Do the load before
+        lazy_list._load()
+        lazy_list.set_parent_lazy(parent)
 
         post1, post2 = resources
         self.assertEqual(post1.parent_resource.name, parent.name)
