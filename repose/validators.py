@@ -1,4 +1,5 @@
 from booby.validators import *
+import six
 
 
 class Range(Integer):
@@ -13,6 +14,10 @@ class Range(Integer):
         if self.max is not None:
             try:
                 invalid = value > self.max
+                if six.PY2:
+                    # Python 2 allows strings to be compared to ints, so
+                    # do some type checking here too
+                    invalid = invalid or not isinstance(value, type(self.max))
             except TypeError:
                 raise errors.ValidationError('Invalid input data')
 
@@ -23,6 +28,10 @@ class Range(Integer):
         if self.min is not None:
             try:
                 invalid = value < self.min
+                if six.PY2:
+                    # Python 2 allows strings to be compared to ints, so
+                    # do some type checking here too
+                    invalid = invalid or not isinstance(value, type(self.min))
             except TypeError:
                 raise errors.ValidationError('Invalid input data')
 
