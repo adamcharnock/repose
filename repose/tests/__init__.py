@@ -63,10 +63,16 @@ class Post(Resource):
         endpoint_list = '/user/{user_id}/post'
 
 
+class Profile(Resource):
+    email = fields.String()
+    age = fields.Integer()
+
+
 class User(Resource):
     id = fields.Integer()
     name = fields.String()
     posts = fields.ManagedCollection(Post)
+    profile = fields.Embedded(Profile)
 
     objects = Manager()
     with_posts = Manager(filter=lambda u: u.posts.count() > 0)
@@ -85,6 +91,10 @@ class TestApi(Api):
 USER_DATA = {
     'id': 1,
     'name': 'Test User',
+    'profile': {
+        'email': 'test@example.com',
+        'age': 42,
+    },
     'posts': [
         {
             'id': 10,
