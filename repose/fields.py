@@ -46,7 +46,7 @@ class ManagedIdListCollection(ManagedCollection):
         return super(ManagedIdListCollection, self).decode(value)
 
     def encode(self, value):
-        if not value.results.is_loaded():
+        if not value.results.has_changed():
             # Avoid loading the results if nothing has changed
             return self._initial_encoded_value
         else:
