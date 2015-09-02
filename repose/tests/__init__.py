@@ -2,6 +2,7 @@ from unittest import TestCase as BaseTestCase
 from repose import fields, utilities
 from repose.api import Api
 from repose.client import Client
+from repose.managers import Manager
 from repose.resources import Resource
 
 
@@ -66,6 +67,9 @@ class User(Resource):
     id = fields.Integer()
     name = fields.String()
     posts = fields.ManagedCollection(Post)
+
+    objects = Manager()
+    with_posts = Manager(filter=lambda u: u.posts.count() > 0)
 
     class Meta:
         endpoint = '/user/{user_id}'
