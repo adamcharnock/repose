@@ -1,5 +1,6 @@
 import weakref
 from booby.models import ModelMeta, Model
+import six
 from repose.managers import Manager
 from repose.utilities import make_endpoint
 
@@ -39,7 +40,7 @@ class ResourceMetaclass(ModelMeta):
         resource._managers = managers
 
 
-class Resource(Model):
+class Resource(six.with_metaclass(ResourceMetaclass, Model)):
     """ Representation of an API resource
 
     :ivar parent_resource:
@@ -47,7 +48,6 @@ class Resource(Model):
         generating endpoints for child resources. Parent resources are
         stored as :py:func:`weakref.ref`
     """
-    __metaclass__ = ResourceMetaclass
 
     class Meta:
         """ Override this class in child resources to provide

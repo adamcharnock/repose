@@ -30,9 +30,8 @@ class TestClient(Client):
 
     def add_response(self, method, endpoint, data):
         response = DummyResponse(data)
-        self.responses.update(**{
-            (method.upper(), endpoint.rstrip('/')): response
-        })
+        key = (method.upper(), endpoint.rstrip('/'))
+        self.responses[key] =response
 
     def _request(self, method, endpoint):
         method = method.upper()
