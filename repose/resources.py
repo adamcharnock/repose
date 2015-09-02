@@ -109,17 +109,18 @@ class Resource(six.with_metaclass(ResourceMetaclass, Model)):
         :param encoded: dict The encoded resource data
 
         """
+        prepared = {}
         for k, v in encoded.items():
-            if k in self._persisted_data and v == self._persisted_data[k]:
-                encoded.pop(k)
-        return encoded
+            if k not in self._persisted_data or v != self._persisted_data[k]:
+                prepared[k] = v
+        return prepared
 
     def save(self):
         """Persist pending changes
         """
         endpoint = make_endpoint(self)
         encoded = self.encode()
-        prepared_data = self.prepare_save(encoded.copy())
+        prepared_data = self.prepare_save(encoded)
 
         self.client.put(endpoint, prepared_data)
         self._persisted_data = encoded
