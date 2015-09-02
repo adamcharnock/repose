@@ -1,4 +1,4 @@
-from requests.models import Response
+from unittest import TestCase as BaseTestCase
 from repose import fields, utilities
 from repose.api import Api
 from repose.client import Client
@@ -6,6 +6,14 @@ from repose.resources import Resource
 
 
 class UnexpectedRequest(Exception): pass
+
+
+class TestCase(BaseTestCase):
+
+    def setUp(self):
+        from repose.tests import TestApi
+        self.api = TestApi()
+        self.client = self.api.client
 
 
 class DummyResponse(object):
@@ -34,7 +42,7 @@ class TestClient(Client):
         except:
             raise UnexpectedRequest('{} {}'.format(method, endpoint))
 
-        return utilities.parse_response(response)
+        return self.parse_response(response.json())
 
     def get(self, endpoint):
         return self._request('GET', endpoint)
