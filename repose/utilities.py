@@ -36,7 +36,8 @@ class LazyList(MutableSequence):
 
     def _set_parent(self):
         for v in self._values:
-            v.contribute_parents(self.parent)
+            if hasattr(v, 'contribute_parents'):
+                v.contribute_parents(self.parent)
 
     def _load(self):
         if not self.is_loaded():
@@ -44,7 +45,10 @@ class LazyList(MutableSequence):
             self._set_parent()
 
     def __len__(self):
-        return self._size
+        if self.is_loaded():
+            return len(self._values)
+        else:
+            return self._size
 
     def __getitem__(self, index):
         self._load()
@@ -61,3 +65,7 @@ class LazyList(MutableSequence):
     def insert(self, i, x):
         self._load()
         self._values.insert(i, x)
+
+    def __eq__(self, other):
+        self._load()
+        return self._values == list(other)
