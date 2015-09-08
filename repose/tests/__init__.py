@@ -1,8 +1,9 @@
 from contextlib import contextmanager
 from unittest import TestCase as BaseTestCase
+from requests import Response
 from repose import fields, utilities
 from repose.api import Api
-from repose.client import Client
+from repose.apibackend import ApiBackend
 from repose.managers import Manager
 from repose.resources import Resource
 
@@ -15,19 +16,20 @@ class TestCase(BaseTestCase):
     def setUp(self):
         from repose.tests import TestApi
         self.api = TestApi()
-        self.client = self.api.client
 
 
-class DummyResponse(object):
+class DummyResponse(Response):
 
     def __init__(self, json):
+        super(DummyResponse, self).__init__()
+        self.status_code = 200
         self._json = json
 
     def json(self):
         return self._json
 
 
-class TestClient(Client):
+class TestApiBackend(ApiBackend):
     responses = {}
     requests = []
 
@@ -46,7 +48,7 @@ class TestClient(Client):
             self.requests.append((method, endpoint, json, False))
             raise UnexpectedRequest('{} {}'.format(method, endpoint))
 
-        return self.parse_response(response.json())
+        return self.parse_response(response)
 
     def get(self, endpoint):
         return self._request('GET', endpoint)
@@ -64,7 +66,7 @@ class TestClient(Client):
         :param method: string The HTTP method expected (get, put, post, delete)
         :param endpoint: string The HTTP endpoint expected (e.g. `/user/1`)
         :param request_data: dict Expected contents of the request body
-        :param response_data: dict The response body the client should return
+        :param response_data: dict The response body the backend should return
         """
         self.add_response(method.upper(), endpoint, response_data)
         initial_len = len(self.requests)
@@ -113,7 +115,7 @@ class User(Resource):
 
 class TestApi(Api):
     resources = [User]
-    client_class = TestClient
+    backend_class = TestApiBackend
     base_url = '/test-api/'
 
 

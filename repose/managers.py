@@ -17,7 +17,7 @@ class Manager(object):
                                      ``Meta.endpoint`` string
         """
         endpoint = self.model.Meta.endpoint.format(**endpoint_params)
-        data = self.client.get(endpoint)
+        data = self.api.get(endpoint)
         decoded = self.model.decode(data)
         return self.model(**decoded)
 
@@ -25,7 +25,7 @@ class Manager(object):
         """Load all the results for this manager"""
         if self.results is not None:
             return
-        data = self.client.get(self.get_results_endpoint())
+        data = self.api.get(self.get_results_endpoint())
         for decoder in self.get_decoders():
             data = decoder(data)
         self.results = [self.model(**self.model.decode(d)) for d in data]
@@ -40,8 +40,8 @@ class Manager(object):
         self.model = model
 
     @classmethod
-    def contribute_client(cls, client):
-        cls.client = client
+    def contribute_api(cls, api):
+        cls.api = api
 
     def filter(self, results):
         if self.filter_fn:

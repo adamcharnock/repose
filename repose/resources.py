@@ -70,11 +70,11 @@ class Resource(six.with_metaclass(ResourceMetaclass, Model)):
 
 
     @classmethod
-    def contribute_client(cls, client):
-        """Contribute the API client to this resource and its managers"""
-        cls.client = client
+    def contribute_api(cls, api):
+        """Contribute the API backend to this resource and its managers"""
+        cls.api = api
         for manager in cls._managers:
-            manager.contribute_client(client)
+            manager.contribute_api(api)
 
     def contribute_parents(self, parent=None):
         """Furnish this class with it's parent resources"""
@@ -122,5 +122,5 @@ class Resource(six.with_metaclass(ResourceMetaclass, Model)):
         encoded = self.encode()
         prepared_data = self.prepare_save(encoded)
 
-        self.client.put(endpoint, prepared_data)
+        self.api.put(endpoint, prepared_data)
         self._persisted_data = encoded

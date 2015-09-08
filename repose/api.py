@@ -1,4 +1,4 @@
-from repose.client import Client
+from repose.apibackend import ApiBackend
 
 
 class Api(object):
@@ -6,7 +6,7 @@ class Api(object):
 
     Initialising an ``Api`` instance is a necessary step as
     doing so will furnish all registered Resources (and their Managers)
-    with access to the API client.
+    with access to the API backend.
 
     For example::
 
@@ -38,7 +38,7 @@ class Api(object):
              the use of ``account``.
     """
 
-    client_class = Client
+    backend_class = ApiBackend
     base_url = None
     resources = []
 
@@ -55,34 +55,42 @@ class Api(object):
         for k, v in options.items():
             setattr(self, k, v)
 
-        self.client = self.get_client()
+        self.backend = self.get_backend()
         for resource in self.resources:
-            resource.contribute_client(self.client)
+            resource.contribute_api(self.backend)
 
     def register_resource(self, resource):
         """Register a resource with the Api
 
-        This will cause the resource's client attribute to be
+        This will cause the resource's backend attribute to be
         populated.
 
         :param resource Resource:
         """
         self.resources.append(resource)
 
-        # Pass the client to the model if we have the client available
-        if self.client:
-            resource.contribute_client(self.client)
+        # Pass the backend to the model if we have the backend available
+        if self.backend:
+            resource.contribute_api(self.backend)
 
-    def get_client_class(self):
-        return self.client_class
+    def get_backend_class(self):
+        return self.backend_class
 
-    def get_client(self):
-        client_class = self.get_client_class()
-        return client_class(self.get_base_url())
+    def get_backend(self):
+        backend_class = self.get_backend_class()
+        return backend_class(self.get_base_url())
 
     def get_base_url(self):
         return self.base_url
 
-
+    def __getattr__(self, item):
+        """ Proxy the backend's attributes for convenience
+        """
+        if hasattr(self.backend, item):
+            return getattr(self.backend, item)
+        else:
+            raise AttributeError(
+                "Attribute {} could not be found on Api or ApiBackend".format(item)
+            )
 
 

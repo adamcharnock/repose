@@ -3,8 +3,8 @@ import requests
 from repose import utilities
 
 
-class Client(object):
-    """The HTTP client used to access the remote API
+class ApiBackend(object):
+    """The backend used to access the remote API
 
     This can be extended and passed into your :class:`Api`
     instance at instantiation time.
