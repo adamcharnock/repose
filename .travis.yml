@@ -9,8 +9,8 @@ python:
 install:
   - "python setup.py develop"
   - "pip install ."
-  - "pip install pytest pytest-cov coveralls"
-  - pip install --pre $(python -c "import sys; print('coverage>4.0a1 coveralls>1' if sys.version_info > (3,3) else 'coverage<4')")
+  - "pip install pytest pytest-cov"
+  - pip install --pre $(python -c "import sys; print('coverage>4.0a1 coveralls>=1.0b1' if sys.version_info > (3,3) else 'coverage<4 coveralls<1')")
 script:
   - py.test --cov=repose/
   - coveralls
