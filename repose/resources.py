@@ -135,6 +135,9 @@ class Resource(six.with_metaclass(ResourceMetaclass, Model)):
         self.api.put(endpoint, prepared_data)
         self._persisted_data = encoded
 
+    def get_endpoint_values(self):
+        return {}
+
     def refresh(self):
         data = self.api.get(make_endpoint(self))
         decoded = self.__class__.decode(data)

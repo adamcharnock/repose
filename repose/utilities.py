@@ -15,6 +15,7 @@ def make_endpoint(model):
             if inst is model:
                 values[k] = getattr(inst, k)
 
+    values.update(**model.get_endpoint_values())
     return model.Meta.endpoint.format(**values)
 
 
