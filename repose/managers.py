@@ -43,7 +43,17 @@ class Manager(object):
 
     @classmethod
     def contribute_api(cls, api):
-        cls.api = api
+        cls._api = api
+
+    @property
+    def api(self):
+        try:
+            return self._api
+        except AttributeError:
+            raise AttributeError(
+                "Api not available on {}. Either you haven't instantiated "
+                "an Api instance, or you haven't registered your resource "
+                "with your Api instance.".format(self))
 
     def filter(self, results):
         if self.filter_fn:

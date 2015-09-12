@@ -72,7 +72,7 @@ class Resource(six.with_metaclass(ResourceMetaclass, Model)):
     @classmethod
     def contribute_api(cls, api):
         """Contribute the API backend to this resource and its managers"""
-        cls.api = api
+        cls._api = api
         for manager in cls._managers:
             manager.contribute_api(api)
 
@@ -93,6 +93,15 @@ class Resource(six.with_metaclass(ResourceMetaclass, Model)):
                 # resource, so directly contribute to its parents
                 getattr(self, k).contribute_parents(parent=self)
 
+    @property
+    def api(self):
+        try:
+            return self._api
+        except AttributeError:
+            raise AttributeError(
+                "Api not available on {}. Either you haven't instantiated "
+                "an Api instance, or you haven't registered your resource "
+                "with your Api instance.".format(self))
 
     def prepare_save(self, encoded):
         """Prepare the resource to be saved
