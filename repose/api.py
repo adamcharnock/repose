@@ -57,7 +57,7 @@ class Api(object):
 
         self.backend = self.get_backend()
         for resource in self.resources:
-            resource.contribute_api(self.backend)
+            resource.contribute_api(self)
 
     def register_resource(self, resource):
         """Register a resource with the Api

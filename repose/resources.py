@@ -2,7 +2,7 @@ import weakref
 from booby.models import ModelMeta, Model
 import six
 from repose.managers import Manager
-from repose.utilities import make_endpoint
+from repose.utilities import make_endpoint, get_values_from_endpoint
 
 
 class ResourceMetaclass(ModelMeta):
@@ -93,6 +93,7 @@ class Resource(six.with_metaclass(ResourceMetaclass, Model)):
                 # resource, so directly contribute to its parents
                 getattr(self, k).contribute_parents(parent=self)
 
+
     def prepare_save(self, encoded):
         """Prepare the resource to be saved
 
@@ -124,3 +125,14 @@ class Resource(six.with_metaclass(ResourceMetaclass, Model)):
 
         self.api.put(endpoint, prepared_data)
         self._persisted_data = encoded
+
+    def refresh(self):
+        data = self.api.get(make_endpoint(self))
+        decoded = self.__class__.decode(data)
+        self._update(decoded)
+
+    def as_dict(self):
+        d = {}
+        for field_name in self._fields.keys():
+            d[field_name] = getattr(self, field_name)
+        return d

@@ -12,8 +12,19 @@ def make_endpoint(model):
     for inst in models:
         for k in inst._fields:
             values['{}_{}'.format(inst.__class__.__name__.lower(), k)] = getattr(inst, k)
+            if inst is model:
+                values[k] = getattr(inst, k)
 
     return model.Meta.endpoint.format(**values)
+
+
+def get_values_from_endpoint(resource, endpoint_params):
+    values = {}
+    for k, v in resource._fields.items():
+        field = v.options.get('from_endpoint')
+        if field:
+            values[field] = endpoint_params[field]
+    return values
 
 
 class LazyList(MutableSequence):

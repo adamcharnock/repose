@@ -1,3 +1,4 @@
+from repose.utilities import get_values_from_endpoint
 
 
 class Manager(object):
@@ -19,6 +20,7 @@ class Manager(object):
         endpoint = self.model.Meta.endpoint.format(**endpoint_params)
         data = self.api.get(endpoint)
         decoded = self.model.decode(data)
+        decoded.update(**get_values_from_endpoint(self.model, endpoint_params))
         return self.model(**decoded)
 
     def _load_results(self):
