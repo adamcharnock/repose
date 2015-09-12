@@ -16,7 +16,7 @@ Repose - Python API client framework
 .. image:: https://coveralls.io/repos/adamcharnock/repose/badge.svg
     :target: https://coveralls.io/r/adamcharnock/repose/
 
-Tested on Python 2.6, 2.7, 3.2, 3.3, 3.4, 3.5
+Tested on Python 2.7, 3.2, 3.3, 3.4, 3.5
 
 Installation
 ------------
