@@ -33,6 +33,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
+    'sphinx.ext.napoleon',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -291,8 +292,13 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/', None),
+    'requests': ('http://docs.python-requests.org/en/latest/', None),
+    'booby': ('https://booby.readthedocs.org/en/latest/', None),
+}
 
+autodoc_member_order = 'bysource'
 
 def skip(app, what, name, obj, skip, options):
     # Don't skip init methods

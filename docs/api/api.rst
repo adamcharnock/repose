@@ -1,10 +1,7 @@
-Api Reference
-=============
+Api
+===
 
 .. automodule:: repose.api
-
-    Api
-    ---
 
     .. autoclass:: Api
         :members:
@@ -15,8 +12,3 @@ Api Reference
                 The client class to instantiate. Should be either
                 :class:`Client` or a subclass thereof.
 
-    Client
-    ------
-
-    .. autoclass:: Client
-        :members:

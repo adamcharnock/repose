@@ -43,19 +43,54 @@ class ResourceMetaclass(ModelMeta):
 class Resource(six.with_metaclass(ResourceMetaclass, Model)):
     """ Representation of an API resource
 
-    :ivar parent_resource:
-        A list of all parent resources to this one. Often useful in
-        generating endpoints for child resources. Parent resources are
-        stored as :py:func:`weakref.ref`
+    Attributes:
+
+        parent_resource (list): A list of all parent resources to this one.
+            Often useful in generating endpoints for child resources.
+            Parent resources are stored as :func:`weakref.ref`
+
+        api (Api): The API instance
     """
 
     class Meta:
         """ Override this class in child resources to provide
             configuration details.
+
+            The endpoints listed here can include placeholders in the
+            form ``{fieldname}``. If this resource is a child of another
+            resource, the parent resource's fields may be accessed
+            in the form ``{parentname_fieldname}}``, where ``parentname``
+            is the lowercase class name.
+
+            For example, a ``User`` resource may contain several ``Comment``
+            resources. In which case the ``endpoint`` for the ``Comment``
+            could be::
+
+                /user/{user_id}/comments/{id}
+
+            You could also expand the latter placeholder as follows::
+
+                /user/{user_id}/comments/{comment_id}
+
+            Attributes:
+
+                endpoint (str): Endpoint URL for a single resource
+                    (will be appended to the
+                    API's :attr:`~repose.api.Api.base_url`)
+                endpoint_list (str): Endpoint URL for listing resources
+                    (will be appended to the
+                    API's :attr:`~repose.api.Api.base_url`)
         """
         pass
 
     def __init__(self, **kwargs):
+        """Initialise the resource with field values specified in ``*kwargs``
+
+        Args:
+
+            **kwargs: Fields and their (decoded) values
+
+        """
         self.parent_resource = []
         # Only use fields which have been specified on the resource
         data = {}
@@ -71,13 +106,19 @@ class Resource(six.with_metaclass(ResourceMetaclass, Model)):
 
     @classmethod
     def contribute_api(cls, api):
-        """Contribute the API backend to this resource and its managers"""
+        """Contribute the API backend to this resource and its managers.
+
+        .. note:: Mainly for internal use
+        """
         cls._api = api
         for manager in cls._managers:
             manager.contribute_api(api)
 
     def contribute_parents(self, parent=None):
-        """Furnish this class with it's parent resources"""
+        """Furnish this class with it's parent resources
+
+        .. note:: Mainly for internal use
+        """
         if parent:
             parent = weakref.proxy(parent)
         self.parent_resource = parent
@@ -116,7 +157,9 @@ class Resource(six.with_metaclass(ResourceMetaclass, Model)):
                 prepared['extra_value'] = 'Something'
                 return prepared
 
-        :param encoded: dict The encoded resource data
+        Args:
+
+            encoded (dict): The encoded resource data
 
         """
         prepared = {}

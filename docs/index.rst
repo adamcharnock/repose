@@ -9,8 +9,9 @@ Repose - Quickly create restful API clients in Python
 Contents:
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
+    Documentation Home <self>
     api/index
     todo
 

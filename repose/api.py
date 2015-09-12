@@ -36,6 +36,18 @@ class Api(object):
     .. note: All options passed to the Api's constructor will become
              available as instance variables. See the able example and
              the use of ``account``.
+
+    Attributes:
+
+        base_url (str): The fully-qualified base URL to the the API.
+            (Eg: ``"http://example.com"``)
+        backend_class (:class:`~repose.apibackend.ApiBackend`): The class
+            to instantiate for use as the Api Backend
+            (default: :class:`~repose.apibackend.ApiBackend`).
+        resources (list[Resource]): :class:`~repose.resources.Resource`
+            classes to register with the API. Can also be registered
+            using :meth:`register_resource`.
+
     """
 
     backend_class = ApiBackend
@@ -49,8 +61,17 @@ class Api(object):
 
             my_api = Api(base_url='http://example.com/api/v1')
 
-        :param options: All options specified will will become
-                        available as instance variables.
+        Args:
+            base_url (str): The fully-qualified base URL to the the API.
+                (Eg: ``"http://example.com"``)
+            backend_class (:class:`~repose.apibackend.ApiBackend`): The class
+                to instantiate for use as the Api Backend
+                (default: :class:`~repose.apibackend.ApiBackend`).
+            resources (list[Resource]): :class:`~repose.resources.Resource`
+                classes to register with the API. Can also be registered
+                using :meth:`register_resource`.
+            **options: All options specified will will become
+                available as instance variables.
         """
         for k, v in options.items():
             setattr(self, k, v)
@@ -65,7 +86,10 @@ class Api(object):
         This will cause the resource's backend attribute to be
         populated.
 
-        :param resource Resource:
+        Args:
+
+            resource (:class:`~repose.resources.Resource`):
+                The resource class to register
         """
         self.resources.append(resource)
 

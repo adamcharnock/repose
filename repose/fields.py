@@ -70,9 +70,6 @@ class Dictionary(Field):
 class IsoDate(String):
     """ :class:`Field` subclass for ISO8601 dates.
 
-    Details can be found in the
-    `Philips Hue Documentation <http://www.developers.meethue.com/documentation/datatypes-and-time-patterns>`_.
-
     .. todo:: The :class:`IsoDate` field needs implementing
               Should parse ISO8601 strings into datetime objects and back again.
 
