@@ -45,6 +45,12 @@ to a resource in your Api. Using GitHub's API as an example::
 This represents a very small subset of the available GitHub API,
 but it serves well as a demonstration.
 
+.. seealso::
+
+    See the :class:`~repose.resources.Resource` class for more in-depth details
+    regarding resource definition. Also see the :mod:`repose.fields` module
+    for a list of available fields.
+
 .. _step2:
 
 2. Configure your API
@@ -76,6 +82,11 @@ Or, using extension::
 
 The former is simpler, whereas the latter provides more flexibility for
 overriding the base :class:`~repose.api.Api` class functionality.
+
+.. seealso::
+
+    See the :class:`~repose.api.Api` class for more in-depth details
+    regarding Api definitions.
 
 .. _step3:
 
