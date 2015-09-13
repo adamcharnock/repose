@@ -2,29 +2,31 @@ from repose import fields
 from repose.api import Api
 from repose.resources import Resource
 
-
 class User(Resource):
     id = fields.Integer()
     login = fields.String()
     avatar_url = fields.String()
+    location = fields.String()
+    site_admin = fields.Boolean()
 
     class Meta:
-        endpoint = '/users/{user_login}'
-
+        # Endpoint for getting a single specific user
+        endpoint = '/users/{login}'
+        # Endpoint for listing all users
+        endpoint_list = '/users'
 
 class Repository(Resource):
+    id = fields.Integer()
     name = fields.String()
+    full_name = fields.String()
     description = fields.String()
-    homepage = fields.String()
-    has_issues = fields.Boolean()
-    has_wiki = fields.Boolean()
-    has_downloads = fields.Boolean()
-    # Will contain a User resource
     owner = fields.Embedded(User)
 
     class Meta:
-        endpoint_list = '/repos/{user_login}/repos'
-        endpoint = '/repos/{user_login}/{repository_name}'
+        # Endpoint for getting a single specific repository
+        endpoint = '/repos/{full_name}'
+        # Endpoint for listing all repositories
+        endpoint_list = '/repositories'
 
 
 if __name__ == '__main__':
@@ -33,10 +35,5 @@ if __name__ == '__main__':
     github_api.register_resource(User)
     github_api.register_resource(Repository)
 
-    # Get a specific repository. The keys correspond to the
-    # placeholders in the endpoints specified above.
-    repo = Repository.objects.get(user_login='adamcharnock', repository_name='repose')
-    # Print some information about it
-    print("{} - {}".format(repo.name, repo.description))
-    print("Homepage: {}".format(repo.homepage))
-    print("Owner avatar: {}".format(repo.owner.avatar_url))
+    repo = User.objects.get(login='adamcharnock')
+    import pdb; pdb.set_trace()

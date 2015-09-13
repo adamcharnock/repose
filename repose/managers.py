@@ -52,6 +52,9 @@ Resources::
                 light.on = True
                 light.save()
 
+
+.. todo:: Implement support for pagination of resources
+
 """
 
 from repose.utilities import get_values_from_endpoint

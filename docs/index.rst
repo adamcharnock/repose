@@ -25,6 +25,8 @@ Repose - Python API client framework
     :maxdepth: 1
 
     Documentation Home <self>
+    getting_started
+    managers
     api/index
     todo
     View on GitHub <https://github.com/adamcharnock/repose>
