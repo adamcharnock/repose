@@ -27,6 +27,7 @@ Repose - Python API client framework
     Documentation Home <self>
     api/index
     todo
+    View on GitHub <https://github.com/adamcharnock/repose>
 
 Tested on Python 2.7, 3.2, 3.3, 3.4, 3.5
 
