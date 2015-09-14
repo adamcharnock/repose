@@ -1,4 +1,5 @@
 import weakref
+import booby._utils
 from booby.models import ModelMeta, Model
 import six
 from repose.managers import Manager
@@ -103,6 +104,11 @@ class Resource(six.with_metaclass(ResourceMetaclass, Model)):
         self.contribute_parents()
         self._persisted_data = self.encode()
 
+    def __repr__(self):
+        cls = type(self)
+
+        return '<{}({})>'.format(cls.__name__,
+                                    booby._utils.repr_options(dict(self)))
 
     @classmethod
     def contribute_api(cls, api):
