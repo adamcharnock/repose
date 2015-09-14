@@ -14,7 +14,9 @@ APIs. There are three steps to getting started:
 ------------------------
 
 Each :class:`~repose.resources.Resource` you define will generally map
-to a resource in your Api. Using GitHub's API as an example::
+to a resource in your Api. Using GitHub's API as an example:
+
+.. testcode::
 
     class User(Resource):
         id = fields.Integer()
@@ -29,6 +31,7 @@ to a resource in your Api. Using GitHub's API as an example::
             # Endpoint for listing all users
             endpoint_list = '/users'
 
+
     class Repository(Resource):
         id = fields.Integer()
         name = fields.String()
@@ -41,6 +44,10 @@ to a resource in your Api. Using GitHub's API as an example::
             endpoint = '/repos/{full_name}'
             # Endpoint for listing all repositories
             endpoint_list = '/repositories'
+
+.. testoutput::
+
+
 
 This represents a very small subset of the available GitHub API,
 but it serves well as a demonstration.
@@ -64,14 +71,22 @@ or by defining your own subclass of :class:`~repose.api.Api`.
 In addition to providing high-level configuration, the Api instance
 must also be made aware of all available resources.
 
-For example::
+For example:
+
+.. testcode::
 
     # A simple example of directly instantiating the Api class
     github_api = Api(base_url='https://api.github.com')
     github_api.register_resource(User)
     github_api.register_resource(Repository)
 
-Or, using extension::
+.. testoutput::
+
+
+
+Or, using extension:
+
+.. testcode::
 
     # Alternatively, extend the Api class for added customisation options
     class GitHubApi(Api):
@@ -79,6 +94,10 @@ Or, using extension::
         resources = [User, Repository]
 
     github_api = GitHubApi()
+
+.. testoutput::
+
+
 
 The former is simpler, whereas the latter provides more flexibility for
 overriding the base :class:`~repose.api.Api` class functionality.
@@ -95,27 +114,27 @@ overriding the base :class:`~repose.api.Api` class functionality.
 
 Now let's try it out and get some resources:
 
-.. code-block:: python
+.. doctest::
 
-    # Provide the login to get a user
-    # (as this is what we specified in Meta.endpoint)
+    >>> # Provide the login to get a user
+    >>> # (as this is what we specified in Meta.endpoint)
     >>> User.objects.get(login='adamcharnock')
-    <__main__.User(login=u'adamcharnock', site_admin=None, id=138215, avatar_url=u'https://avatars.githubusercontent.com/u/138215?v=3', location=u'London, UK')>
+    <User(login=u'adamcharnock', site_admin=None, id=138215, avatar_url=u'https://avatars.githubusercontent.com/u/138215?v=3', location=u'London, UK')>
 
-    # Provide the full_name to get a repository
-    # (again, as this is what we specified in Meta.endpoint)
+    >>> # Provide the full_name to get a repository
+    >>> # (again, as this is what we specified in Meta.endpoint)
     >>> seed_repo = Repository.objects.get(full_name='adamcharnock/seed')
-    >>> seed_repo.description
-    'A utility for easily creating and releasing Python packages'
+    >>> print seed_repo.description
+    A utility for easily creating and releasing Python packages
 
-    # The repo's owner attribute will give us a User resource
-    # as this is an `Embedded` field
+    >>> # The repo's owner attribute will give us a User resource
+    >>> # as this is an `Embedded` field
     >>> seed_repo.owner
-    <__main__.User(login=u'adamcharnock', site_admin=None, id=138215, avatar_url=u'https://avatars.githubusercontent.com/u/138215?v=3', location=None)>
+    <User(login=u'adamcharnock', site_admin=None, id=138215, avatar_url=u'https://avatars.githubusercontent.com/u/138215?v=3', location=None)>
 
 Ok, now let's get a list of all repositories:
 
-.. code-block:: python
+.. doctest::
 
     >>> Repository.objects.count()
     100 # That cannot be right...
