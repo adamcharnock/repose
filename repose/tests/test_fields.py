@@ -10,6 +10,16 @@ class ManagedCollectionTestCase(TestCase):
         users = collection.all()
         self.assertEqual(len(users), 2)
 
+    def test_different_refs(self):
+        # Regression test for bug where ManagedCollection
+        # would return the same objects for different
+        # model instances
+        from repose.fields import ManagedCollection
+        user1 = User(**USER_DATA)
+        user2 = User(**USER_DATA)
+
+        self.assertIsNot(user1.posts.all()[0], user2.posts.all()[0])
+
 
 class ManagedIdListCollectionTestCase(TestCase):
 
