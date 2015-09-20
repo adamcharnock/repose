@@ -21,6 +21,9 @@ setup(
     # Put a nice one-liner description here
     description='Quickly create restful API clients in Python',
     long_description=open('README.rst').read() if exists("README.rst") else "",
+    dependency_links=[
+        'https://github.com/adamcharnock/booby/archive/master.zip#egg=booby-0.7.0',
+    ],
     # Any requirements here, e.g. "Django >= 1.1.1"
     install_requires=[
         'booby==0.7.0',
