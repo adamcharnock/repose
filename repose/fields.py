@@ -2,30 +2,24 @@ from booby.fields import *
 from repose import validators
 from repose.decoders import IdToLazyModelListDecoder
 from repose.encoders import ModelToIdListEncoder
+from repose.utilities import LazyList
 
 
 class ManagedCollection(Collection):
 
     def __init__(self, model, *args, **kwargs):
-        self.manager = kwargs.pop('manager', model.objects.__class__())
-        self.manager.contribute_to_class(model)
+        self.manager_class = kwargs.pop('manager', model.objects.__class__)
         super(ManagedCollection, self).__init__(model, *args, **kwargs)
 
     def _resolve(self, value):
         value = super(ManagedCollection, self)._resolve(value)
-        self.manager.results = value
-        return self.manager
+        return self._initialise_manager(value)
 
-    def encode(self, value):
-        return super(ManagedCollection, self).encode(self.manager.results)
-
-    def contribute_parent_to_models(self, parent):
-        for resource in self.manager.all():
-            resource.contribute_parents(parent)
-
-    def __getattr__(self, name):
-        return getattr(self.manager, name)
-
+    def _initialise_manager(self, value):
+        manager = self.manager_class()
+        manager.results = value
+        manager.contribute_to_class(self.model)
+        return manager
 
 class ManagedIdListCollection(ManagedCollection):
     """ Use for providing a managed collection upon a field which contains a
@@ -37,27 +31,27 @@ class ManagedIdListCollection(ManagedCollection):
     """
 
     def __init__(self, model, *args, **kwargs):
+        kwargs.setdefault('default', LazyList)
         super(ManagedIdListCollection, self).__init__(model, *args, **kwargs)
+        self._initial_encoded_value = self._default(model)
         self.options['encoders'] = [ModelToIdListEncoder()]
         self.options['decoders'] = [IdToLazyModelListDecoder(model)]
+
+    def _resolve(self, value):
+        return self._initialise_manager(value)
 
     def decode(self, value):
         self._initial_encoded_value = value
         return super(ManagedIdListCollection, self).decode(value)
 
     def encode(self, value):
+        if isinstance(value.results, list):
+            import pdb; pdb.set_trace()
         if not value.results.has_changed():
             # Avoid loading the results if nothing has changed
             return self._initial_encoded_value
         else:
             return super(ManagedIdListCollection, self).encode(value)
-
-    def _resolve(self, value):
-        self.manager.results = value
-        return self.manager
-
-    def contribute_parent_to_models(self, parent):
-        self.manager.results.set_parent_lazy(parent)
 
 
 class Dictionary(Field):

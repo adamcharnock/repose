@@ -3,18 +3,25 @@ from repose.tests import TestCase, USER_DATA, User
 
 class ManagedCollectionTestCase(TestCase):
 
+    def setUp(self):
+        super(ManagedCollectionTestCase, self).setUp()
+        from repose import Resource, fields
+
+        class Group(Resource):
+            users = fields.ManagedCollection(User)
+
+        self.resource = Group()
+        self.resource.users.contribute_api(self.api)
+
     def test_encode(self):
-        from repose.fields import ManagedCollection
-        collection = ManagedCollection(User)
-        collection.manager.results = [USER_DATA, USER_DATA]
-        users = collection.all()
+        self.resource.users.results = [USER_DATA, USER_DATA]
+        users = self.resource.users.all()
         self.assertEqual(len(users), 2)
 
     def test_different_refs(self):
         # Regression test for bug where ManagedCollection
         # would return the same objects for different
         # model instances
-        from repose.fields import ManagedCollection
         user1 = User(**USER_DATA)
         user2 = User(**USER_DATA)
 
@@ -25,56 +32,57 @@ class ManagedIdListCollectionTestCase(TestCase):
 
     def setUp(self):
         super(ManagedIdListCollectionTestCase, self).setUp()
-        from repose.fields import ManagedIdListCollection
-        collection = ManagedIdListCollection(User)
-        collection.manager.contribute_api(self.api)
-        self.collection = collection
+        from repose import Resource, fields
+
+        class Group(Resource):
+            users = fields.ManagedIdListCollection(User)
+
+        self.resource = Group()
+        self.resource.users.contribute_api(self.api)
 
     def test_decode(self):
-        self.collection.manager.results = self.collection.decode([1,2,3])
+        data = [1,2,3]
+        self.resource._update(self.resource.decode(raw=dict(users=data)))
         self.api.add_response('GET', '/user/1', USER_DATA)
         self.api.add_response('GET', '/user/2', USER_DATA)
         self.api.add_response('GET', '/user/3', USER_DATA)
 
-        list(self.collection.all())
+        list(self.resource.users.all())
         self.assertEqual(len(self.api.requests), 3)
 
     def test_encode_no_change(self):
         data = [1,2,3]
-        value = self.collection.decode(data)
-        self.collection.manager.results = value
+        self.resource._update(self.resource.decode(raw=dict(users=data)))
 
-        # No change, so not api request should be done, we should
+        # No change, so no api request should be done, we should
         # just get the exact data back that we put in
-        self.assertIs(self.collection.encode(self.collection.manager), data)
+        self.assertIs(self.resource.encode()['users'], data)
 
     def test_encode_no_change_with_load(self):
         data = [1,2,3]
-        value = self.collection.decode(data)
-        self.collection.manager.results = value
+        self.resource._update(self.resource.decode(raw=dict(users=data)))
         self.api.add_response('GET', '/user/1', USER_DATA)
         self.api.add_response('GET', '/user/2', USER_DATA)
         self.api.add_response('GET', '/user/3', USER_DATA)
 
-        list(self.collection.all())
-        # No change, so not api request should be done, we should
+        list(self.resource.users.all())
+        # No change, so no api request should be done, we should
         # just get the exact data back that we put in
-        self.assertIs(self.collection.encode(self.collection.manager), data)
+        self.assertIs(self.resource.encode()['users'], data)
 
     def test_encode_has_change(self):
         data = [1,2,3]
-        value = self.collection.decode(data)
-        self.collection.manager.results = value
+        self.resource._update(self.resource.decode(raw=dict(users=data)))
         self.api.add_response('GET', '/user/1', USER_DATA)
         self.api.add_response('GET', '/user/2', USER_DATA)
         self.api.add_response('GET', '/user/3', USER_DATA)
 
         new_user = User(**USER_DATA)
-        # TODO: This syntax doesn't look right at all. collection.append() would make more sense
-        self.collection.all().append(new_user)
-        list(self.collection.all())
-        # No change, so not api request should be done, we should
-        # just get the exact data back that we put in
-        self.assertIsNot(self.collection.encode(self.collection.manager), data)
+        # TODO: This syntax doesn't look right at all. users.append() would make more sense
+        self.resource.users.all().append(new_user)
+        list(self.resource.users.all())
+        # Change, so api request is done and returned value is
+        # NOT that of the initial data
+        self.assertIsNot(self.resource.encode()['users'], data)
 
 

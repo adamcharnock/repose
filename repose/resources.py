@@ -130,12 +130,8 @@ class Resource(six.with_metaclass(ResourceMetaclass, Model)):
         self.parent_resource = parent
 
         for k, v in self._fields.items():
-            if hasattr(v, 'contribute_parent_to_models'):
-                # This is a ManagedCollection of some sort, so
-                # let it handle contributing to its models
-                v.contribute_parent_to_models(parent=self)
-            elif hasattr(getattr(self, k), 'contribute_parents'):
-                # This is an Embedded field of some sort. The
+            if hasattr(getattr(self, k), 'contribute_parents'):
+                # This is an Embedded/Collection field of some sort. The
                 # value attached to the resource will be another
                 # resource, so directly contribute to its parents
                 getattr(self, k).contribute_parents(parent=self)

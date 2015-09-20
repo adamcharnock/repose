@@ -65,7 +65,7 @@ class LazyList(MutableSequence):
     .. todo:: Make the size parameter optional
     """
 
-    def __init__(self, generator, size):
+    def __init__(self, generator=None, size=0):
         """ Initialise the LazyList
 
         Args:
@@ -73,7 +73,7 @@ class LazyList(MutableSequence):
             generator (generator): The generator to be lazy loaded
             size (int): The size of the list to be loaded
         """
-        self._generator = generator
+        self._generator = [] if generator is None else generator
         self._size = size
         self._changed = False
 

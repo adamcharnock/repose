@@ -72,7 +72,7 @@ class Manager(object):
         results_endpoint (list): The results to be used to fetch results
 
     """
-    model = None
+    _model = None
     results = None
     results_endpoint = None
 
@@ -144,7 +144,7 @@ class Manager(object):
         return self.results_endpoint or self.model.Meta.endpoint_list
 
     def contribute_to_class(self, model):
-        self.model = model
+        self._model = model
 
     @classmethod
     def contribute_api(cls, api):
@@ -159,6 +159,15 @@ class Manager(object):
                 "Api not available on {}. Either you haven't instantiated "
                 "an Api instance, or you haven't registered your resource "
                 "with your Api instance.".format(self))
+
+    @property
+    def model(self):
+        if self._model is None:
+            raise AttributeError(
+                "Model not available on {}. Perhaps you need to call "
+                "contribute_to_class() on the manager?".format(self))
+        else:
+            return self._model
 
     def filter(self, results):
         if self.filter_fn:
@@ -191,3 +200,7 @@ class Manager(object):
 
         """
         return len(self.all())
+
+    def contribute_parents(self, parent):
+        for resource in self.all():
+            resource.contribute_parents(parent)
